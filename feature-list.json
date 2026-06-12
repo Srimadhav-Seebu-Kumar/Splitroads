@@ -1,0 +1,1145 @@
+{
+  "meta": {
+    "product": "Split-Roads",
+    "version": "1.0.0",
+    "priority_scale": "P0 = MVP-critical, P1 = Phase 2, P2 = Phase 3-4, P3 = Phase 5 / opportunistic",
+    "effort_scale": "S < 1 wk, M = 1-3 wk, L = 1-2 mo, XL = quarter+",
+    "complexity_scale": "low | medium | high | very_high"
+  },
+  "core_features": [
+    {
+      "id": "CF-001",
+      "name": "Broker Import Hub",
+      "description": "One-click import of trade history via broker APIs (IBKR, Alpaca, Tradier, Binance, Bybit, MetaTrader reports) and CSV fallback. Value before any capture is installed.",
+      "priority": "P0",
+      "effort": "L",
+      "dependencies": [],
+      "business_value": "Removes onboarding friction; instant time-to-value; table stakes vs journals",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "CF-002",
+      "name": "Automated Trade Journal",
+      "description": "Zero-effort journal: every executed trade auto-logged with entry/exit, size, R-multiple, fees, screenshots of chart context at execution time.",
+      "priority": "P0",
+      "effort": "L",
+      "dependencies": ["CF-001"],
+      "business_value": "The Trojan horse — must match best-in-class journals to earn adoption",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "CF-003",
+      "name": "Trade Plan Capture",
+      "description": "Lightweight pre-trade plan: intended entry, stop, target, size, thesis. Becomes ground truth for plan-vs-execution deviation analytics.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": [],
+      "business_value": "Highest-signal intent data with explicit user consent; powers discipline scoring",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "CF-004",
+      "name": "Browser Extension Intent Capture (TradingView)",
+      "description": "Extension instrumenting TradingView: charts opened/revisited, drawings, alerts, order ticket open/edit/cancel, hover dwell on buy/sell. Local buffering, <5ms overhead, granular consent scopes.",
+      "priority": "P0",
+      "effort": "L",
+      "dependencies": ["CF-005", "CF-015"],
+      "business_value": "The differentiating data source; nothing downstream exists without it",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "CF-005",
+      "name": "Intent Event Ingestion Pipeline",
+      "description": "Ingestion gateway + immutable event log: schema validation, idempotency, ordering, enrichment with market context at capture time.",
+      "priority": "P0",
+      "effort": "L",
+      "dependencies": [],
+      "business_value": "The company's foundational asset; everything is a view over this log",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "CF-006",
+      "name": "Intent Session Clustering",
+      "description": "Groups raw intent events into IntentSessions per instrument/timeframe window so downstream scoring operates on coherent decision episodes.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-005"],
+      "business_value": "Converts noise into analyzable decision units",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "CF-007",
+      "name": "Heuristic Intent Scorer v1",
+      "description": "Transparent weighted scoring of intent probability from session features (ticket opened, size typed, stop drawn, dwell time). Conservative thresholds, fully explainable.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-006"],
+      "business_value": "Ships intent inference a year before ML is ready; bootstraps labels",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "CF-008",
+      "name": "Abandoned Entry Phantom",
+      "description": "When intent_score crosses threshold and no trade follows, spawn a phantom tracking the inferred trade (entry/stop/target from drawings, ticket values, or defaults) to resolution.",
+      "priority": "P0",
+      "effort": "L",
+      "dependencies": ["CF-007", "SIM-001", "SIM-002"],
+      "business_value": "The signature feature — measures the cost of hesitation, which no competitor can",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "CF-009",
+      "name": "Premature Exit Phantom",
+      "description": "For every manually-closed winner, simulate holding to plan target / trailing rule. Quantifies money left on the table per exit decision.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-002", "SIM-001"],
+      "business_value": "Works with zero intent capture installed — broker data alone; fastest wow moment",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "CF-010",
+      "name": "Phantom Ledger",
+      "description": "Browsable record of all phantoms: status (active/resolved/expired), outcome distribution, linked real decision. Always shown as distributions, never single-trade taunts.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-008", "CF-009"],
+      "business_value": "Makes the invisible dataset tangible to the user",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "CF-011",
+      "name": "Hesitation Cost Metric",
+      "description": "Aggregate statistic: expected R lost to abandoned/delayed entries over a period, with confidence interval and minimum-sample gating.",
+      "priority": "P0",
+      "effort": "S",
+      "dependencies": ["CF-008"],
+      "business_value": "The headline number in marketing and the weekly report",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "CF-012",
+      "name": "Daily Summary Dashboard",
+      "description": "30-second glance: today's trades, intent sessions, new phantoms, one highlighted insight. Calm, no engagement bait.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-002", "CF-010"],
+      "business_value": "Daily habit anchor",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "CF-013",
+      "name": "Weekly Behavioral Report",
+      "description": "The core ritual: weekly email + in-app review of behavioral stats, phantom outcomes, DNA movement, one recommended focus. Designed for a 15-minute Sunday session.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-011", "BX-001"],
+      "business_value": "Primary retention mechanism and shareable artifact",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "CF-014",
+      "name": "Decision DNA Baseline Profile",
+      "description": "After ~3 weeks of silent capture, the 'reveal': initial behavioral profile across DNA dimensions with confidence levels and percentile context.",
+      "priority": "P0",
+      "effort": "L",
+      "dependencies": ["BX-001"],
+      "business_value": "The signature emotional moment of onboarding; drives word of mouth",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "CF-015",
+      "name": "Consent & Capture Control Center",
+      "description": "Granular, legible toggles for every capture scope; live view of what is being observed; pause-all switch.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": [],
+      "business_value": "Trust is the precondition for the entire data strategy",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "CF-016",
+      "name": "Quick Intent Note",
+      "description": "One-tap 'I almost took this trade' manual log with prefilled instrument/price/time — explicit intent declaration where capture isn't installed.",
+      "priority": "P0",
+      "effort": "S",
+      "dependencies": [],
+      "business_value": "High-quality labeled intent data; works on any platform including mobile",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "CF-017",
+      "name": "Setup Taxonomy & Trade Tagging",
+      "description": "User-defined setup library with auto-tag suggestions; all behavioral analytics sliceable by setup.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-002"],
+      "business_value": "Behavioral patterns differ per setup; required for credible insights",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "CF-018",
+      "name": "R-Multiple & Risk Analytics",
+      "description": "Standard journal analytics done properly: R distribution, expectancy, win rate by setup/time, MFE/MAE.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-002"],
+      "business_value": "Table stakes for journal parity",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "CF-019",
+      "name": "Insight Feed",
+      "description": "Ranked feed of statistically-gated insights from insight-service. Each insight: claim, evidence distribution, sample size, suggested action.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["AI-006"],
+      "business_value": "The product's voice; where behavioral intelligence is consumed",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "CF-020",
+      "name": "Full Data Export & Deletion",
+      "description": "Machine-readable export of all raw events, trades, phantoms, profiles; hard-delete pipeline honoring data principles.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-005"],
+      "business_value": "Trust, compliance (GDPR/CCPA), enterprise prerequisite",
+      "technical_complexity": "medium"
+    }
+  ],
+  "behavioral_features": [
+    {
+      "id": "BX-001",
+      "name": "Decision DNA Engine",
+      "description": "Computes the dimensional behavioral profile: Conviction, Hesitation/Fear, FOMO, Patience, Discipline, Risk Tolerance, Adaptability, Consistency, Emotional Stability, Loss Aversion, Recency Bias, Overtrading Propensity. Each with score, confidence, trend.",
+      "priority": "P0",
+      "effort": "XL",
+      "dependencies": ["CF-005", "CF-007", "SIM-001"],
+      "business_value": "The durable identity layer of the product; basis of B2B evaluation later",
+      "technical_complexity": "very_high"
+    },
+    {
+      "id": "BX-002",
+      "name": "Fear Index",
+      "description": "Composite of hesitation frequency, abandoned-high-intent rate, under-sizing vs plan, stop-tightening behavior — contextualized by market regime.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["BX-001"],
+      "business_value": "Most relatable single metric for the wedge user",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "BX-003",
+      "name": "Conviction Index",
+      "description": "Measures alignment between expressed intent strength and executed size/persistence; detects conviction collapse at execution moment.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["BX-001"],
+      "business_value": "Directly monetizable insight: conviction-weighted sizing gaps are quantifiable money",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "BX-004",
+      "name": "FOMO Detector",
+      "description": "Flags chase entries: late entries after extended moves with no prior intent session, entries within minutes of large candles, social-hours clustering.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["CF-006"],
+      "business_value": "High-frequency pain point; strong retention driver",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "BX-005",
+      "name": "Revenge Trade Detector",
+      "description": "Detects post-loss re-entry patterns: shortened inter-trade interval, size escalation, same-instrument re-entry after stop-out.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["CF-002"],
+      "business_value": "Single most destructive retail behavior; prop firms care intensely",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "BX-006",
+      "name": "Overtrading Monitor",
+      "description": "Personal baseline of trade frequency vs edge decay; flags sessions where marginal trades historically destroy expectancy.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["CF-018"],
+      "business_value": "Quantifies 'less is more' per individual instead of as a platitude",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "BX-007",
+      "name": "Discipline / Plan-Adherence Score",
+      "description": "Per-trade deviation between captured plan and execution (entry drift, stop moves, early exits, size changes), aggregated to a discipline score.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-003"],
+      "business_value": "The metric prop firms will eventually buy; start accruing history now",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "BX-008",
+      "name": "Tilt Detection",
+      "description": "Within-session deterioration detector: decision-interval compression, plan-adherence collapse, size variance spike following drawdown.",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["BX-005", "BX-006"],
+      "business_value": "Foundation for the most valuable alert in the product",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "BX-009",
+      "name": "Behavioral Percentile Benchmarks",
+      "description": "Anonymous, k-anonymity-gated (k>=50) percentiles per DNA dimension across the user base, segmented by style/market/experience.",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["BX-001"],
+      "business_value": "Network effect: every new trader sharpens everyone's context",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "BX-010",
+      "name": "Behavioral Goals & Interventions",
+      "description": "User commits to one behavioral target (e.g., 'hold winners to plan'); platform tracks it with phantom-verified evidence and structured check-ins.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["CF-013", "BX-001"],
+      "business_value": "Moves product from diagnosis to treatment — the Phase 3 thesis",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "BX-011",
+      "name": "Improvement Evidence Tracker",
+      "description": "Longitudinal, statistically honest measurement of behavioral change: pre/post distributions per dimension with significance testing.",
+      "priority": "P2",
+      "effort": "M",
+      "dependencies": ["BX-010"],
+      "business_value": "Proof the product works — the core marketing and enterprise asset",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "BX-012",
+      "name": "Pre-Session Mindset Check-In",
+      "description": "Optional 20-second pre-market state log (sleep, stress, focus); correlated against session behavior over time.",
+      "priority": "P2",
+      "effort": "S",
+      "dependencies": [],
+      "business_value": "Cheap feature, unique dataset linking state to behavior",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "BX-013",
+      "name": "Inference Correction Loop",
+      "description": "Every inferred intent/phantom is user-correctable ('I wasn't planning this'). Corrections become labeled training data and immediately adjust the user's record.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-007", "CF-010"],
+      "business_value": "Simultaneously a trust feature and the label-generation engine for ML",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "BX-014",
+      "name": "Behavioral P&L Attribution",
+      "description": "Decomposes period P&L into strategy expectancy vs behavioral deltas (hesitation cost, early-exit cost, sizing cost, tilt cost) using phantom baselines.",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["CF-008", "CF-009", "SIM-006", "SIM-007"],
+      "business_value": "The single most differentiated analytic in the product",
+      "technical_complexity": "high"
+    }
+  ],
+  "simulation_features": [
+    {
+      "id": "SIM-001",
+      "name": "Phantom Engine Core",
+      "description": "Stateless worker fleet that spawns, advances, resolves, and expires phantoms against market data. Deterministic, replayable, versioned simulation logic.",
+      "priority": "P0",
+      "effort": "XL",
+      "dependencies": ["SIM-002", "CF-005"],
+      "business_value": "The counterfactual factory; core IP",
+      "technical_complexity": "very_high"
+    },
+    {
+      "id": "SIM-002",
+      "name": "Market Replay Data Service",
+      "description": "Candle/tick store with point-in-time correctness for simulation: no lookahead, exchange-calendar aware, multi-asset (equities, futures, FX, crypto).",
+      "priority": "P0",
+      "effort": "L",
+      "dependencies": [],
+      "business_value": "Simulation credibility depends entirely on this layer",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "SIM-003",
+      "name": "Fill & Slippage Model",
+      "description": "Conservative execution model for phantoms: spread, slippage by liquidity bucket, partial-fill assumptions, fees. Documented and published.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["SIM-002"],
+      "business_value": "Quant-proofing; prevents the 'fantasy fills' critique that would kill credibility",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "SIM-004",
+      "name": "Delayed Entry Phantom",
+      "description": "Simulates the trade as planned at original intent time vs as actually executed later; isolates the cost/benefit of waiting.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["SIM-001", "CF-007"],
+      "business_value": "Separates healthy patience from costly hesitation — a key coaching distinction",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "SIM-005",
+      "name": "Delayed Exit Phantom",
+      "description": "For trades held past plan target/stop, simulates the planned exit; measures cost of overstaying.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["SIM-001", "CF-003"],
+      "business_value": "Completes the exit-quality picture alongside premature exits",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "SIM-006",
+      "name": "Conviction Phantom",
+      "description": "Re-simulates executed trades at plan-consistent (full conviction) size; aggregates the sizing gap into 'conviction cost'.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["SIM-001", "BX-003"],
+      "business_value": "Often the largest hidden number for profitable traders — strong upsell hook",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "SIM-007",
+      "name": "Position Size Phantom",
+      "description": "Counterfactual P&L under alternative sizing policies (fixed-fractional, volatility-scaled, plan size) over the user's actual trade sequence, including drawdown paths.",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["SIM-001"],
+      "business_value": "Turns sizing debates into evidence; popular with prop traders",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "SIM-008",
+      "name": "Stop Placement Phantom",
+      "description": "Simulates original (pre-adjustment) stop placements vs moved stops; quantifies the cost of stop-tightening and stop-pulling per habit.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["SIM-001"],
+      "business_value": "Addresses one of the most common destructive interventions",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "SIM-009",
+      "name": "Opposite Personality Phantom",
+      "description": "Portfolio-level simulation of the user's trade history under an inverted behavioral policy (e.g., 'you, but patient'): same setups, behaviorally-transformed execution. Strictly presented as aggregate distributions.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["SIM-001", "BX-001"],
+      "business_value": "The most narratively powerful artifact in the product; must obey anti-regret laws",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "SIM-010",
+      "name": "Phantom Lifecycle & Pruning",
+      "description": "Expiration policies (time-stop, structure invalidation, account-irrelevance), archival to cold storage, and pruning of low-information phantoms to control cost and noise.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["SIM-001"],
+      "business_value": "Keeps the corpus meaningful and the compute bill sane",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "SIM-011",
+      "name": "Phantom Ranking & Information Value",
+      "description": "Scores each phantom by expected insight value (intent confidence x outcome divergence x pattern membership) to decide what surfaces to users.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["SIM-001", "AI-006"],
+      "business_value": "Signal-to-noise control; protects Law 1 (distributions, not anecdotes)",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "SIM-012",
+      "name": "Counterfactual Uncertainty Bands",
+      "description": "Every phantom P&L carries a distribution from fill/path uncertainty (Monte Carlo over slippage and intra-bar path assumptions), rendered as bands everywhere.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["SIM-003"],
+      "business_value": "Statistical honesty as a brand asset",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "SIM-013",
+      "name": "Portfolio-Level Phantom Aggregation",
+      "description": "Period-level rollups: phantom-adjusted equity curve, total behavioral alpha/cost decomposition with confidence intervals.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["SIM-012", "BX-014"],
+      "business_value": "The executive summary view of everything the engine knows",
+      "technical_complexity": "medium"
+    }
+  ],
+  "ai_features": [
+    {
+      "id": "AI-001",
+      "name": "Learned Intent Model v2",
+      "description": "Sequence model (transformer over intent-event streams) predicting execution probability per IntentSession, trained on captured sessions with executed/abandoned outcomes plus correction labels.",
+      "priority": "P1",
+      "effort": "XL",
+      "dependencies": ["CF-007", "BX-013"],
+      "business_value": "Core proprietary model; accuracy compounds with the data moat",
+      "technical_complexity": "very_high"
+    },
+    {
+      "id": "AI-002",
+      "name": "Intent Calibration Monitoring",
+      "description": "Continuous Brier score and reliability-curve tracking per cohort and model version; auto-alerts on calibration drift; gates model promotion.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["AI-001"],
+      "business_value": "Miscalibrated intent poisons every downstream system; this is the safety rail",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AI-003",
+      "name": "Behavioral Embedding Model",
+      "description": "Learned trader-behavior embeddings from event/trade sequences; powers similarity search, cohorting, archetype discovery, and DNA dimension refinement.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["AI-001"],
+      "business_value": "Unsupervised structure discovery over a dataset only we have",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "AI-004",
+      "name": "DNA Inference Engine v2",
+      "description": "Replaces heuristic DNA scoring with model-based estimation: hierarchical Bayesian per-dimension scores with population priors, shrinkage for small samples, explicit confidence.",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["BX-001"],
+      "business_value": "Statistically defensible profiles — prerequisite for B2B evaluation use",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "AI-005",
+      "name": "Coaching Narration Engine",
+      "description": "LLM layer that converts structured insight payloads into personalized, tone-calibrated coaching text. Hard constraint: narrates pre-computed numbers only; never computes or invents statistics.",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["AI-006"],
+      "business_value": "Makes intelligence feel like a coach, not a spreadsheet",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AI-006",
+      "name": "Insight Generation Engine",
+      "description": "Pipeline that mines validated statistical patterns (per-user and cohort), applies sample-size/significance/novelty gates, ranks by actionability, and emits Insights.",
+      "priority": "P0",
+      "effort": "L",
+      "dependencies": ["CF-005", "SIM-001"],
+      "business_value": "The product's voice; enforces product laws programmatically",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "AI-007",
+      "name": "Personalization Engine",
+      "description": "Learns which insight types, tones, and cadences each user acts on; adapts delivery accordingly.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["AI-005", "AI-006"],
+      "business_value": "Coaching that adapts is coaching that retains",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "AI-008",
+      "name": "Pre-Tilt Risk Prediction",
+      "description": "Real-time model predicting elevated probability of tilt behavior in the current session from early-session signals; powers the highest-value alert in the product.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["BX-008", "AI-001"],
+      "business_value": "Prevention beats diagnosis; flagship enterprise capability for risk desks",
+      "technical_complexity": "very_high"
+    },
+    {
+      "id": "AI-009",
+      "name": "Behavioral Anomaly Detection",
+      "description": "Detects departures from a trader's own baseline (sudden size spikes, novel instruments, frequency shifts) for self-awareness and firm risk surfaces.",
+      "priority": "P2",
+      "effort": "M",
+      "dependencies": ["AI-003"],
+      "business_value": "Cheap to build on embeddings; valuable to both B2C and B2B",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AI-010",
+      "name": "Behavioral Fix Recommendation Engine",
+      "description": "Maps diagnosed patterns to ranked interventions with expected-value estimates ('rule X would have saved ~2.1R/mo at 80% CI'), validated against phantom evidence.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["AI-006", "SIM-013"],
+      "business_value": "Closes the loop from insight to action; justifies Pro pricing",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "AI-011",
+      "name": "Online Learning & Label Pipeline",
+      "description": "Continuous ingestion of outcomes and corrections into training stores; scheduled retraining with shadow deployment, champion/challenger evaluation, and rollback.",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["AI-001", "AI-002"],
+      "business_value": "Operationalizes the flywheel: more usage, better models, automatically",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "AI-012",
+      "name": "Natural-Language History Query",
+      "description": "Ask questions over your own record ('show my Thursday FOMO entries on NQ this quarter') compiled to validated queries — never free-form LLM math.",
+      "priority": "P2",
+      "effort": "M",
+      "dependencies": ["AI-005"],
+      "business_value": "Discoverability of depth without dashboard sprawl",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AI-013",
+      "name": "Model Registry & Provenance",
+      "description": "Versioned registry of all models with training-data lineage, eval metrics, and per-inference provenance stamped onto stored scores.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": [],
+      "business_value": "Replayability, auditability, enterprise trust",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AI-014",
+      "name": "Counterfactual Personality Simulation",
+      "description": "ML-driven behavioral policy transforms behind the Opposite Personality Phantom: learned mappings from DNA profile deltas to execution-policy changes.",
+      "priority": "P3",
+      "effort": "XL",
+      "dependencies": ["SIM-009", "AI-003"],
+      "business_value": "Long-term differentiator; research-grade capability",
+      "technical_complexity": "very_high"
+    },
+    {
+      "id": "AI-015",
+      "name": "Eval-Pass Prediction (Prop)",
+      "description": "Predicts probability a prop-eval trader passes/keeps funding from behavioral trajectory; trained on consented prop cohort outcomes.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["AI-004", "EN-001"],
+      "business_value": "Directly priced into prop-firm contracts; unique training data",
+      "technical_complexity": "high"
+    }
+  ],
+  "analytics_features": [
+    {
+      "id": "AN-001",
+      "name": "Phantom-Adjusted Equity Curve",
+      "description": "Actual equity curve overlaid with behavioral-counterfactual bands (e.g., 'plan-adherent you'), with uncertainty shading.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["SIM-013"],
+      "business_value": "The most screenshot-shared artifact in the product",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AN-002",
+      "name": "Decision Graph Explorer",
+      "description": "Interactive visualization of Market Event -> Attention -> Intent -> Action -> Outcome chains; filter by instrument, setup, outcome divergence.",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["CF-005", "PL-013"],
+      "business_value": "Makes the causal model of the product tangible; power-user magnet",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "AN-003",
+      "name": "Temporal Behavior Analytics",
+      "description": "Behavioral metrics by time-of-day, day-of-week, session phase, and around news events ('your fear is expensive on Thursdays').",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["BX-001"],
+      "business_value": "Concrete, actionable slicing users immediately act on",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AN-004",
+      "name": "Exit Quality Analytics",
+      "description": "MFE/MAE capture ratios, exit-efficiency distribution, premature-vs-late exit decomposition with phantom evidence.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-009", "SIM-005"],
+      "business_value": "Exits are where most behavioral money leaks; strongest journal upgrade",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AN-005",
+      "name": "Sizing Analytics",
+      "description": "Size-vs-plan deviation distributions, size-vs-outcome correlation, conviction-collapse frequency by context.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["SIM-006", "SIM-007"],
+      "business_value": "Pairs with conviction phantoms to quantify the sizing gap",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AN-006",
+      "name": "Streak & Drawdown Behavior Analysis",
+      "description": "How behavior mutates during winning/losing streaks and drawdowns: adherence, frequency, size variance trajectories.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["BX-008"],
+      "business_value": "Reveals the regime-dependence of discipline — a universal blind spot",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AN-007",
+      "name": "Cohort Benchmark Reports",
+      "description": "K-anonymous comparisons against style/experience-matched cohorts on behavioral dimensions and behavioral costs.",
+      "priority": "P2",
+      "effort": "M",
+      "dependencies": ["BX-009"],
+      "business_value": "Network-effect surface; context sells",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AN-008",
+      "name": "Calendar & Heatmap Views",
+      "description": "Behavioral calendar: discipline, activity, and phantom-cost heatmaps over days/weeks.",
+      "priority": "P1",
+      "effort": "S",
+      "dependencies": ["BX-007"],
+      "business_value": "Cheap, loved, habitual",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "AN-009",
+      "name": "Custom Report Builder",
+      "description": "Composable report blocks (metrics, distributions, phantom rollups) with saved templates and scheduled delivery.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["CF-013"],
+      "business_value": "Pro/coach tier differentiator",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AN-010",
+      "name": "Period Comparison Engine",
+      "description": "Statistically honest this-month-vs-last comparisons across all behavioral metrics with significance indicators.",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["BX-011"],
+      "business_value": "Progress visibility drives retention",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AN-011",
+      "name": "Coach Client Analytics",
+      "description": "Coach-facing dashboard over consented client rosters: DNA summaries, focus areas, week-over-week movement, session prep packets.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["PL-010", "BX-001"],
+      "business_value": "Each coach brings 10-50 traders; force-multiplier channel",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "AN-012",
+      "name": "News/Event Context Overlay",
+      "description": "Economic calendar and volatility-regime tagging on all behavioral analytics, separating regime effects from trait effects.",
+      "priority": "P2",
+      "effort": "M",
+      "dependencies": ["SIM-002"],
+      "business_value": "Prevents misattribution; deepens analytical credibility",
+      "technical_complexity": "medium"
+    }
+  ],
+  "platform_features": [
+    {
+      "id": "PL-001",
+      "name": "Auth, MFA & Session Security",
+      "description": "Email/OAuth sign-in, TOTP MFA, secure session management, Argon2id credential storage.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": [],
+      "business_value": "Table stakes; financial-adjacent trust baseline",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "PL-002",
+      "name": "Billing & Subscriptions",
+      "description": "Stripe-based tiers (Free/Trader/Pro/Team), trials, proration, dunning, tax handling.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["PL-001"],
+      "business_value": "Revenue infrastructure",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "PL-003",
+      "name": "Broker Integration Framework",
+      "description": "Pluggable connector SDK with normalized trade/position schema, OAuth/key vaulting (AES-256-GCM), webhook + polling adapters, health monitoring.",
+      "priority": "P0",
+      "effort": "L",
+      "dependencies": ["CF-005"],
+      "business_value": "Each connector widens the funnel; framework keeps marginal cost low",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "PL-004",
+      "name": "TradingView Webhook Ingestion",
+      "description": "Alert-webhook receiver mapping user alert payloads into intent events (watch/alert intent class).",
+      "priority": "P0",
+      "effort": "S",
+      "dependencies": ["CF-005"],
+      "business_value": "Zero-extension intent signal from the largest retail platform",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "PL-005",
+      "name": "MetaTrader 4/5 Capture EA",
+      "description": "Expert Advisor capturing order-ticket activity, pending-order edits, and executions on MT4/5 — primary capture path for FX/prop users.",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["CF-005"],
+      "business_value": "Unlocks the prop-firm wedge (FTMO-style firms run MT4/5)",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "PL-006",
+      "name": "Mobile Companion App",
+      "description": "Review-only mobile: daily summary, insight feed, weekly report, quick intent notes. No execution features by design.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["CF-012", "CF-019"],
+      "business_value": "Retention surface for the reflection ritual",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "PL-007",
+      "name": "Public API & Webhooks Out",
+      "description": "Versioned REST API over journals, phantoms, DNA, insights (user-scoped tokens); outbound webhooks for events like phantom resolution.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["PL-001"],
+      "business_value": "Phase 5 platform play; early dogfooding keeps internal APIs honest",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "PL-008",
+      "name": "Notification System",
+      "description": "Email/push digests honoring the calm philosophy: batched, scheduled, never intraday-noisy by default.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-013"],
+      "business_value": "Brings users back to the ritual without engagement-bait",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "PL-009",
+      "name": "Team Workspaces",
+      "description": "Multi-trader workspaces with shared visibility rules, per-field consent matrix, and aggregate team views.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["PL-001", "PL-010"],
+      "business_value": "Bridge from B2C to firm product",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "PL-010",
+      "name": "Roles, Permissions & Sharing",
+      "description": "RBAC across personal/coach/team/firm contexts; trader-controlled per-field visibility (the consent matrix as UI).",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["PL-001"],
+      "business_value": "Prerequisite for every multi-party use case",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "PL-011",
+      "name": "Audit Logging",
+      "description": "Immutable audit trail of all access to behavioral data, surfaced to the data owner ('who viewed my profile').",
+      "priority": "P1",
+      "effort": "M",
+      "dependencies": ["PL-010"],
+      "business_value": "Trust differentiator and enterprise requirement",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "PL-012",
+      "name": "Observability & Admin Platform",
+      "description": "OpenTelemetry tracing, structured logging (PII-scrubbed), pipeline-lag dashboards, capture-health monitoring per integration, internal admin tools.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": [],
+      "business_value": "Silent capture failure = silent data loss = moat erosion; must be visible",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "PL-013",
+      "name": "Decision Graph Store",
+      "description": "Graph projection service maintaining DecisionNodes/DecisionEdges from the event stream (Postgres adjacency, replayable).",
+      "priority": "P1",
+      "effort": "L",
+      "dependencies": ["CF-005"],
+      "business_value": "Backbone of graph explorer and causal analytics",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "PL-014",
+      "name": "Privacy Center",
+      "description": "Self-serve data inventory, export, deletion, consent history, and capture-scope management in one legible surface.",
+      "priority": "P0",
+      "effort": "M",
+      "dependencies": ["CF-015", "CF-020"],
+      "business_value": "Radical transparency as a marketing asset, not a compliance cost",
+      "technical_complexity": "low"
+    }
+  ],
+  "enterprise_features": [
+    {
+      "id": "EN-001",
+      "name": "Prop Firm Evaluation Dashboard",
+      "description": "Firm-facing view of eval-cohort behavioral quality: process scores, rule adherence, risk-behavior flags — beyond 30-trade outcome stats.",
+      "priority": "P2",
+      "effort": "XL",
+      "dependencies": ["BX-007", "AI-004", "PL-009"],
+      "business_value": "The flagship enterprise product; solves prop firms' core business problem",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "EN-002",
+      "name": "Trader Behavioral Scorecards",
+      "description": "Standardized, confidence-rated behavioral scorecards per trader for allocation and development decisions, with trader-consented visibility.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["EN-001"],
+      "business_value": "The artifact firms pay per-seat for",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "EN-003",
+      "name": "Firm-Level Benchmarks",
+      "description": "Internal cohort benchmarks (desk vs desk, cohort vs industry aggregate) built on the cross-firm dataset only we possess.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["BX-009", "EN-001"],
+      "business_value": "Pure data-moat monetization; impossible to replicate without our corpus",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "EN-004",
+      "name": "Risk-Behavior Alerting",
+      "description": "Real-time desk alerts on tilt prediction, anomaly detection, and rule-breach precursors, routed to risk managers with policy controls.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["AI-008", "AI-009"],
+      "business_value": "Prevents blowups; easiest enterprise ROI story",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "EN-005",
+      "name": "Rule-Adherence Compliance Monitor",
+      "description": "Configurable firm rule engine (max daily loss, size limits, restricted hours) with behavioral-precursor warnings, not just post-hoc breach reports.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["EN-001"],
+      "business_value": "Maps directly to prop-firm operating costs",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "EN-006",
+      "name": "SSO / SAML / SCIM",
+      "description": "Enterprise identity: SAML SSO, SCIM provisioning, directory-mapped roles.",
+      "priority": "P2",
+      "effort": "M",
+      "dependencies": ["PL-001", "PL-010"],
+      "business_value": "Procurement checkbox; blocks deals if missing",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "EN-007",
+      "name": "Enterprise Data Controls",
+      "description": "Custom retention policies, regional data residency, VPC peering / private deployment option, DPA tooling.",
+      "priority": "P3",
+      "effort": "XL",
+      "dependencies": ["EN-006"],
+      "business_value": "Unlocks funds and regulated buyers",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "EN-008",
+      "name": "Bulk Seat & Cohort Management",
+      "description": "Firm admin: invite cohorts, manage seats, lifecycle traders through eval -> funded -> alumni states.",
+      "priority": "P2",
+      "effort": "M",
+      "dependencies": ["PL-009"],
+      "business_value": "Operational necessity for firm accounts",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "EN-009",
+      "name": "Firm API & Data Export",
+      "description": "Firm-scoped API over consented trader aggregates and scorecards for integration with internal risk systems.",
+      "priority": "P3",
+      "effort": "L",
+      "dependencies": ["PL-007", "EN-002"],
+      "business_value": "Embeds Split-Roads into firm infrastructure — switching costs",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "EN-010",
+      "name": "Coach Workspace (Professional)",
+      "description": "Practice-management tier for coaches/psychologists: client rosters, consented data views, session prep packets, progress evidence.",
+      "priority": "P2",
+      "effort": "L",
+      "dependencies": ["AN-011", "PL-010"],
+      "business_value": "Channel and revenue simultaneously",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "EN-011",
+      "name": "Hedge Fund PM Analytics",
+      "description": "Execution-behavior analytics for PMs/execution traders: hesitation cost on idea implementation, sizing-conviction alignment at book scale.",
+      "priority": "P3",
+      "effort": "XL",
+      "dependencies": ["EN-001", "AI-004"],
+      "business_value": "Highest ACV segment; enter only with proven models",
+      "technical_complexity": "very_high"
+    },
+    {
+      "id": "EN-012",
+      "name": "Enterprise Audit & Reporting Pack",
+      "description": "Exportable, board-ready behavioral risk reports; full access-audit trails; model-provenance documentation for diligence.",
+      "priority": "P3",
+      "effort": "M",
+      "dependencies": ["PL-011", "AI-013"],
+      "business_value": "Deal-closer for compliance-sensitive buyers",
+      "technical_complexity": "low"
+    }
+  ],
+  "future_features": [
+    {
+      "id": "FUT-001",
+      "name": "Native Desktop Capture Terminal",
+      "description": "Our own order-ticket and watchlist surface routing to user brokers — first-party, full-fidelity intent capture without platform dependence.",
+      "priority": "P3",
+      "effort": "XL",
+      "dependencies": ["PL-003"],
+      "business_value": "Removes the largest platform-dependence risk; deepest capture fidelity",
+      "technical_complexity": "very_high"
+    },
+    {
+      "id": "FUT-002",
+      "name": "Wearable / HRV Integration",
+      "description": "Opt-in physiological context (HRV, sleep) correlated with behavioral metrics; strictly user-private by default.",
+      "priority": "P3",
+      "effort": "L",
+      "dependencies": ["BX-012"],
+      "business_value": "Unique state-behavior dataset; research-grade differentiation",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "FUT-003",
+      "name": "Voice Session Debriefs",
+      "description": "AI coach voice conversations over the weekly report; transcripts become labeled reflection data.",
+      "priority": "P3",
+      "effort": "L",
+      "dependencies": ["AI-005", "AI-007"],
+      "business_value": "Coaching modality expansion",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "FUT-004",
+      "name": "Options & Futures-Specific Phantom Models",
+      "description": "Counterfactual models honoring greeks/expiry for options and roll/margin mechanics for futures.",
+      "priority": "P3",
+      "effort": "XL",
+      "dependencies": ["SIM-001"],
+      "business_value": "Expands credible TAM to derivatives-native traders",
+      "technical_complexity": "very_high"
+    },
+    {
+      "id": "FUT-005",
+      "name": "Split-Roads Score (Industry Standard)",
+      "description": "Portable, trader-owned behavioral certification that firms accept in hiring/funding decisions — the 'credit score' of trading process quality.",
+      "priority": "P3",
+      "effort": "XL",
+      "dependencies": ["EN-002", "BX-009"],
+      "business_value": "Endgame network effect: standard-setter position",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "FUT-006",
+      "name": "Consented Aggregate Data Products",
+      "description": "K-anonymous behavioral indices (e.g., retail hesitation index by regime) for research desks — opt-in, aggregate-only, never individual grain.",
+      "priority": "P3",
+      "effort": "L",
+      "dependencies": ["BX-009"],
+      "business_value": "Second business line on the same data estate",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "FUT-007",
+      "name": "Embedded Broker Partnerships",
+      "description": "White-label behavioral insights inside broker/prop platforms ('powered by Split-Roads'), with capture built into partner order flows.",
+      "priority": "P3",
+      "effort": "XL",
+      "dependencies": ["PL-007", "EN-009"],
+      "business_value": "Distribution at platform scale; capture without extensions",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "FUT-008",
+      "name": "Real-Time Co-Pilot Mode (Guarded)",
+      "description": "Opt-in, minimal intraday nudges strictly limited to pre-committed user rules ('you said: no entries after 2 losses'). Ships only if evidence shows net behavioral benefit.",
+      "priority": "P3",
+      "effort": "L",
+      "dependencies": ["AI-008", "BX-010"],
+      "business_value": "Highest-risk/highest-reward feature; gated by Law 5 research",
+      "technical_complexity": "high"
+    },
+    {
+      "id": "FUT-009",
+      "name": "Team Trading Rooms",
+      "description": "Shared live behavioral context for desks that trade together: collective discipline state, not P&L leaderboards.",
+      "priority": "P3",
+      "effort": "L",
+      "dependencies": ["PL-009"],
+      "business_value": "Desk-culture product for firm tier",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "FUT-010",
+      "name": "Academic Research Portal",
+      "description": "Governed access for behavioral-finance researchers to consented, aggregated datasets; publications cite Split-Roads data.",
+      "priority": "P3",
+      "effort": "M",
+      "dependencies": ["FUT-006"],
+      "business_value": "Credibility flywheel and recruiting magnet",
+      "technical_complexity": "low"
+    },
+    {
+      "id": "FUT-011",
+      "name": "Multi-Account Portfolio Behavioral View",
+      "description": "Unified behavioral analytics across multiple brokers/prop accounts with per-account context separation.",
+      "priority": "P3",
+      "effort": "M",
+      "dependencies": ["PL-003"],
+      "business_value": "Serious traders run 3+ accounts; consolidation locks them in",
+      "technical_complexity": "medium"
+    },
+    {
+      "id": "FUT-012",
+      "name": "Screen-Context Capture (ML Vision)",
+      "description": "Opt-in periodic screen-context understanding (what chart/timeframe is in focus) for platforms with no API surface; on-device processing only.",
+      "priority": "P3",
+      "effort": "XL",
+      "dependencies": ["CF-004"],
+      "business_value": "Universal capture coverage; hardest privacy bar — on-device or not at all",
+      "technical_complexity": "very_high"
+    }
+  ]
+}

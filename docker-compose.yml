@@ -1,0 +1,93 @@
+version: '3.9'
+
+# Split-Roads local development stack
+# Services: Postgres/TimescaleDB · Redpanda (Kafka) · Redis
+# Usage: docker compose up -d
+
+services:
+  # ─── PostgreSQL + TimescaleDB ─────────────────────────────────────────────
+  db:
+    image: timescale/timescaledb:latest-pg16
+    container_name: splitroads-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: splitroads
+      POSTGRES_PASSWORD: splitroads_dev_only
+      POSTGRES_DB: splitroads
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./packages/db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U splitroads"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Redpanda (Kafka-API-compatible event backbone) ───────────────────────
+  redpanda:
+    image: redpandadata/redpanda:v23.3.21
+    container_name: splitroads-redpanda
+    restart: unless-stopped
+    command:
+      - redpanda
+      - start
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
+      - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
+      - --rpc-addr redpanda:33145
+      - --advertise-rpc-addr redpanda:33145
+      - --mode dev-container
+      - --smp 1
+      - --default-log-level=warn
+    ports:
+      - "19092:19092"
+      - "18082:18082"
+      - "18081:18081"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  # Redpanda console (UI for inspecting topics)
+  redpanda-console:
+    image: redpandadata/console:v2.7.2
+    container_name: splitroads-redpanda-console
+    restart: unless-stopped
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKERS: redpanda:9092
+    ports:
+      - "8080:8080"
+
+  # ─── Redis ────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: splitroads-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pg_data:
+  redpanda_data:
+  redis_data:
+
+networks:
+  default:
+    name: splitroads-net
