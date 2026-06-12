@@ -307,8 +307,8 @@ async function listPhantoms(userId: string, filter: { type?: string; status?: st
     SELECT *
     FROM phantom.phantoms
     WHERE user_id = ${userId}
-      AND (${filter.type ?? null} IS NULL OR phantom_type = ${filter.type ?? null})
-      AND (${filter.status ?? null} IS NULL OR status = ${filter.status ?? null})
+      AND (${filter.type ?? null}::text IS NULL OR phantom_type = ${filter.type ?? null}::text)
+      AND (${filter.status ?? null}::text IS NULL OR status = ${filter.status ?? null}::text)
     ORDER BY spawned_at DESC
     LIMIT 100
   `

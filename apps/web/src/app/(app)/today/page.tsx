@@ -1,180 +1,196 @@
 'use client'
+/**
+ * Today: the daily glance. The River carries the story;
+ * below it, exactly one insight, the open loop, and a quiet close.
+ * Designed to end the session, not extend it.
+ */
+import { useMemo, useState } from 'react'
 import { useApi } from '@/hooks/useApi'
+import { useAuth } from '@/lib/auth-context'
 import { api } from '@/lib/api'
-import { Card, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Stat } from '@/components/ui/Stat'
-import { Badge } from '@/components/ui/Badge'
-import { formatR, formatPnl, rColor, timeAgo, cn } from '@/lib/utils'
-import { TrendingUp, TrendingDown, Ghost, Zap, Eye, AlertCircle } from 'lucide-react'
+import { River } from '@/components/river/River'
+import type { RiverFork } from '@/components/river/layout'
+import { EvidenceChip } from '@/components/ui/Band'
+import { Button } from '@/components/ui/Button'
+import { normalizeTrade, normalizePhantom, PHANTOM_TYPE_LABELS } from '@/lib/normalize'
+import { formatR, timeAgo, cn } from '@/lib/utils'
+import { Mark } from '@/components/brand/Mark'
 
 export default function TodayPage() {
-  const { data, loading } = useApi((token) => api.dashboard.today(token))
+  const { token } = useAuth()
+  const { data: dash } = useApi((t) => api.dashboard.today(t))
+  const { data: tradesData, loading: tradesLoading } = useApi((t) => api.trades.list(t, { per_page: '100' }))
+  const { data: phantomsData, loading: phantomsLoading, refetch: refetchPhantoms } = useApi((t) => api.phantoms.list(t))
 
-  if (loading) return <PageSkeleton />
+  const trades = useMemo(() => ((tradesData as { items?: unknown[] })?.items ?? []).map(normalizeTrade), [tradesData])
+  const phantoms = useMemo(() => ((phantomsData as unknown[]) ?? []).map(normalizePhantom), [phantomsData])
 
-  const phantomStats = data?.phantom_stats as any
-  const topInsight = data?.top_insight as any
-  const todayTrades = (data?.today_trades ?? []) as any[]
+  const forks = useMemo<RiverFork[]>(() => [
+    ...trades.map((t): RiverFork => ({
+      id: t.tradeId, kind: 'trade', at: new Date(t.openedAt).getTime(),
+      symbol: t.instrumentSymbol, direction: t.direction, r: t.rMultiple,
+    })),
+    ...phantoms.map((p): RiverFork => ({
+      id: p.phantomId, kind: 'phantom', at: new Date(p.spawnedAt).getTime(),
+      symbol: p.instrumentSymbol, direction: p.direction, r: null,
+      p05: p.p05, p50: p.p50, p95: p.p95,
+      phantomType: p.phantomType, status: p.status,
+    })),
+  ], [trades, phantoms])
+
+  const loading = tradesLoading || phantomsLoading
+  const topInsight = (dash as { top_insight?: TopInsight | null })?.top_insight ?? null
+  const openLoop = phantoms.find(
+    (p) => p.phantomType === 'ABANDONED_ENTRY' && p.status === 'active'
+      && p.spawnIntentScore !== null && p.spawnIntentScore >= 0.5 && p.spawnIntentScore < 0.75
+  )
+
+  const todayTrades = trades.filter((t) => isToday(t.openedAt))
 
   return (
-    <div className="space-y-8">
-      {/* Page header */}
-      <div>
-        <h1 className="text-xl font-semibold text-zinc-100">Today</h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-        </p>
-      </div>
+    <div className="flex min-h-full flex-col">
+      {/* The centerpiece */}
+      {!loading && <River forks={forks} className="h-[52vh] min-h-[340px] shrink-0" />}
+      {loading && <div className="h-[52vh] min-h-[340px] shrink-0 animate-pulse bg-raised/40" />}
 
-      {/* Headline stats */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Card>
-          <Stat
-            label="Open trades"
-            value={data?.open_trades ?? 0}
-            subtext="currently in market"
-          />
-        </Card>
-        <Card>
-          <Stat
-            label="Trades today"
-            value={todayTrades.length}
-            subtext="logged automatically"
-          />
-        </Card>
-        <Card>
-          <Stat
-            label="Intent sessions"
-            value={data?.intent_sessions_today ?? 0}
-            subtext="captured today"
-          />
-        </Card>
-        <Card>
-          <Stat
-            label="Pending reviews"
-            value={data?.pending_corrections ?? 0}
-            delta={data?.pending_corrections ? 'Needs your input' : undefined}
-            deltaPositive={false}
-          />
-        </Card>
-      </div>
-
-      {/* Phantom headline numbers */}
-      {phantomStats && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Ghost className="h-3.5 w-3.5" /> Exit Quality
-              </CardTitle>
-              {phantomStats.prematureExits > 0 && (
-                <Badge variant="cost">{phantomStats.prematureExits} phantoms</Badge>
-              )}
-            </CardHeader>
-            {phantomStats.avgPrematureExitCostR !== null ? (
-              <div>
-                <p className="text-2xl font-semibold tabular-nums text-amber-400">
-                  {formatR(phantomStats.avgPrematureExitCostR)} / trade
-                </p>
-                <p className="mt-1 text-xs text-zinc-600">median R left on table · uncertainty bands in Phantoms</p>
+      {/* The calm column */}
+      <div className="mx-auto w-full max-w-3xl flex-1 px-6 pb-16 pt-10">
+        {/* One insight, exactly one */}
+        <section className="rise-in-1" aria-label="Today's insight">
+          <h2 className="text-[11px] font-medium uppercase tracking-[0.14em] text-faint">One thing worth knowing</h2>
+          {topInsight ? (
+            <div className="mt-3">
+              <p className="text-[17px] leading-relaxed text-ink">
+                {claimText(topInsight)}
+              </p>
+              <div className="mt-2 flex items-center gap-2">
+                <EvidenceChip>{evidenceText(topInsight)}</EvidenceChip>
+                {topInsight.action && (
+                  <span className="text-xs text-dim">{topInsight.action.label}</span>
+                )}
               </div>
-            ) : (
-              <p className="text-sm text-zinc-600">Accumulating — {phantomStats.prematureExits ?? 0} of 20 needed</p>
-            )}
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="h-3.5 w-3.5" /> Hesitation Cost
-              </CardTitle>
-              {phantomStats.abandonedEntries > 0 && (
-                <Badge variant="cost">{phantomStats.abandonedEntries} phantoms</Badge>
-              )}
-            </CardHeader>
-            {phantomStats.hesitationCostR !== null ? (
-              <div>
-                <p className="text-2xl font-semibold tabular-nums text-amber-400">
-                  {formatR(phantomStats.hesitationCostR)} / trade
-                </p>
-                <p className="mt-1 text-xs text-zinc-600">avg winning phantom R · trades you walked away from</p>
-              </div>
-            ) : (
-              <p className="text-sm text-zinc-600">Install the extension to capture intent</p>
-            )}
-          </Card>
-        </div>
-      )}
-
-      {/* Top insight */}
-      {topInsight && (
-        <Card className="border-zinc-700">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Eye className="h-3.5 w-3.5" /> Latest Insight
-            </CardTitle>
-            <Badge variant={topInsight.severity === 'cost' ? 'cost' : 'improvement'}>
-              {topInsight.severity}
-            </Badge>
-          </CardHeader>
-          <p className="text-sm text-zinc-300">{topInsight.claim?.description ?? topInsight.kind}</p>
-          {topInsight.action && (
-            <div className="mt-3 rounded-lg bg-zinc-800 px-3 py-2">
-              <p className="text-xs font-medium text-zinc-400">Suggested action</p>
-              <p className="mt-0.5 text-sm text-zinc-200">{topInsight.action.label}</p>
             </div>
+          ) : (
+            <p className="mt-3 text-sm text-faint">
+              The engine is watching. Insights publish once a pattern clears the evidence gate (n≥20); no number arrives before it&apos;s earned.
+            </p>
           )}
-        </Card>
-      )}
+        </section>
 
-      {/* Today's trades */}
-      {todayTrades.length > 0 && (
-        <div>
-          <h2 className="mb-3 text-sm font-medium text-zinc-400">Today&apos;s trades</h2>
-          <div className="space-y-2">
-            {todayTrades.map((t: any) => (
-              <Card key={t.tradeId} className="flex items-center justify-between py-3">
-                <div className="flex items-center gap-3">
-                  {t.direction === 'long'
-                    ? <TrendingUp className="h-4 w-4 text-teal-500" />
-                    : <TrendingDown className="h-4 w-4 text-amber-500" />
-                  }
-                  <div>
-                    <p className="text-sm font-medium text-zinc-100">{t.instrumentSymbol}</p>
-                    <p className="text-xs text-zinc-600">{timeAgo(t.openedAt)}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className={cn('text-sm font-semibold tabular-nums', rColor(t.rMultiple))}>
-                    {t.rMultiple ? formatR(t.rMultiple) : (t.closedAt ? '—' : 'open')}
-                  </p>
-                  <p className="text-xs text-zinc-600">{t.closedAt ? formatPnl(t.realizedPnl) : 'in market'}</p>
-                </div>
-              </Card>
-            ))}
-          </div>
+        {/* Open loop: the one thing awaiting the user */}
+        {openLoop && token && (
+          <section className="rise-in-2 mt-10" aria-label="Awaiting your confirmation">
+            <h2 className="text-[11px] font-medium uppercase tracking-[0.14em] text-faint">Awaiting you</h2>
+            <OpenLoopCard
+              symbol={openLoop.instrumentSymbol}
+              direction={openLoop.direction}
+              spawnedAt={openLoop.spawnedAt}
+              score={openLoop.spawnIntentScore ?? 0}
+              onAnswer={async (verdict) => {
+                await api.phantoms.correct(token, openLoop.phantomId, verdict)
+                refetchPhantoms()
+              }}
+            />
+          </section>
+        )}
+
+        {/* Today's trades: a quiet strip, not a table */}
+        {todayTrades.length > 0 && (
+          <section className="rise-in-3 mt-10" aria-label="Today's trades">
+            <h2 className="text-[11px] font-medium uppercase tracking-[0.14em] text-faint">Today, on the road</h2>
+            <ul className="mt-3 divide-y divide-line">
+              {todayTrades.slice(0, 6).map((t) => (
+                <li key={t.tradeId} className="flex items-center justify-between py-2.5">
+                  <span className="text-sm text-dim">
+                    <span className="text-ink">{t.direction === 'long' ? '↑' : '↓'} {t.instrumentSymbol}</span>
+                    <span className="ml-2 text-xs text-faint">{timeAgo(t.openedAt)}</span>
+                  </span>
+                  <span className={cn('num text-sm', rTone(t.rMultiple, !!t.closedAt))}>
+                    {t.closedAt ? formatR(t.rMultiple) : 'open'}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* Quiet close: the anti-engagement signature */}
+        <div className="rise-in-4 mt-16 flex flex-col items-center gap-3 text-center">
+          <Mark size={20} className="text-faint" />
+          <p className="text-sm text-faint">Nothing else needs you today.</p>
         </div>
-      )}
-
-      {/* Calm close — anti-engagement signature */}
-      {todayTrades.length === 0 && !loading && (
-        <p className="text-center text-sm text-zinc-700 py-8">
-          No trades logged today. That&apos;s fine — come back after market hours.
-        </p>
-      )}
+      </div>
     </div>
   )
 }
 
-function PageSkeleton() {
+type TopInsight = {
+  kind?: string
+  severity?: string
+  claim?: { description?: string; metric?: string; sample_n?: number; ci?: string }
+  action?: { label?: string } | null
+}
+
+function claimText(i: TopInsight): string {
+  return i.claim?.description ?? i.kind?.replaceAll('_', ' ') ?? 'New pattern published.'
+}
+
+function evidenceText(i: TopInsight): string {
+  const parts: string[] = []
+  if (i.claim?.sample_n) parts.push(`n=${i.claim.sample_n}`)
+  if (i.claim?.ci) parts.push(`CI ${i.claim.ci}`)
+  return parts.length ? parts.join(' · ') : 'evidence attached'
+}
+
+function isToday(iso: string): boolean {
+  const d = new Date(iso)
+  const now = new Date()
+  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate()
+}
+
+function rTone(r: number | null, closed: boolean): string {
+  if (!closed || r === null) return 'text-faint'
+  return r >= 0 ? 'text-gain' : 'text-cost'
+}
+
+function OpenLoopCard({ symbol, direction, spawnedAt, score, onAnswer }: {
+  symbol: string
+  direction: 'long' | 'short'
+  spawnedAt: string
+  score: number
+  onAnswer: (verdict: 'confirmed_intent' | 'denied_intent') => Promise<void>
+}) {
+  const [state, setState] = useState<'idle' | 'busy' | 'done'>('idle')
+
+  if (state === 'done') {
+    return (
+      <p className="mt-3 text-sm text-dim">
+        Noted. Every answer makes the intent engine more yours.
+      </p>
+    )
+  }
+
   return (
-    <div className="space-y-8 animate-pulse">
-      <div className="h-8 w-32 rounded bg-zinc-800" />
-      <div className="grid grid-cols-4 gap-4">
-        {[1,2,3,4].map(i => <div key={i} className="h-24 rounded-xl bg-zinc-900" />)}
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        {[1,2].map(i => <div key={i} className="h-32 rounded-xl bg-zinc-900" />)}
+    <div className="mt-3 rounded-[10px] border border-line bg-raised p-4">
+      <p className="text-sm text-ink">
+        Were you planning this {direction} on <span className="font-semibold">{symbol}</span> {timeAgo(spawnedAt)}?
+      </p>
+      <p className="mt-1 text-xs text-faint">
+        The engine read {Math.round(score * 100)}% intent and wants your correction, not its own assumption.
+      </p>
+      <div className="mt-3 flex gap-2">
+        <Button
+          size="sm" variant="secondary" disabled={state === 'busy'}
+          onClick={async () => { setState('busy'); await onAnswer('confirmed_intent'); setState('done') }}
+        >
+          Yes, I was
+        </Button>
+        <Button
+          size="sm" variant="ghost" disabled={state === 'busy'}
+          onClick={async () => { setState('busy'); await onAnswer('denied_intent'); setState('done') }}
+        >
+          No
+        </Button>
       </div>
     </div>
   )

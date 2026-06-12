@@ -65,8 +65,8 @@ export async function listTrades(
       WHERE user_id = ${userId}
         AND (${fromVal}::timestamptz IS NULL OR opened_at >= ${fromVal}::timestamptz)
         AND (${toVal}::timestamptz IS NULL   OR opened_at <= ${toVal}::timestamptz)
-        AND (${symbolVal} IS NULL            OR instrument_symbol = ${symbolVal})
-        AND (${dirVal} IS NULL               OR direction = ${dirVal})
+        AND (${symbolVal}::text IS NULL      OR instrument_symbol = ${symbolVal}::text)
+        AND (${dirVal}::text IS NULL         OR direction = ${dirVal}::text)
         AND (${filter.open_only ? sql`closed_at IS NULL` : sql`true`})
       ORDER BY opened_at DESC
       LIMIT ${limit} OFFSET ${offset}
@@ -77,8 +77,8 @@ export async function listTrades(
       WHERE user_id = ${userId}
         AND (${fromVal}::timestamptz IS NULL OR opened_at >= ${fromVal}::timestamptz)
         AND (${toVal}::timestamptz IS NULL   OR opened_at <= ${toVal}::timestamptz)
-        AND (${symbolVal} IS NULL            OR instrument_symbol = ${symbolVal})
-        AND (${dirVal} IS NULL               OR direction = ${dirVal})
+        AND (${symbolVal}::text IS NULL      OR instrument_symbol = ${symbolVal}::text)
+        AND (${dirVal}::text IS NULL         OR direction = ${dirVal}::text)
     `
 
     return paginate(rows, count ?? 0, page, perPage)

@@ -3,7 +3,10 @@
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "citext";
-CREATE EXTENSION IF NOT EXISTS "timescaledb";
+-- TimescaleDB is optional (present in production, skipped in plain-Postgres dev)
+DO $$ BEGIN
+  CREATE EXTENSION IF NOT EXISTS "timescaledb";
+EXCEPTION WHEN OTHERS THEN NULL; END $$;
 
 -- Schema layout (see DATABASE_DESIGN.md §1)
 CREATE SCHEMA IF NOT EXISTS events;

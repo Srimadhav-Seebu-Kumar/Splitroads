@@ -16,7 +16,15 @@ if (!url) {
 const sql = postgres(url)
 
 async function migrate() {
-  // Bootstrap migration tracking table
+  // Run bootstrap (extensions + schema layout) — idempotent
+  const initFile = join(__dirname, '../../../../packages/db/init/00_extensions.sql')
+  const initSql = await readFile(initFile, 'utf-8').catch(() => null)
+  if (initSql) {
+    await sql.unsafe(initSql)
+    console.log('  init  00_extensions.sql')
+  }
+
+  // Bootstrap migration tracking table (must be after 'core' schema is created)
   await sql`
     CREATE TABLE IF NOT EXISTS core.migrations (
       id          SERIAL PRIMARY KEY,
@@ -25,7 +33,7 @@ async function migrate() {
     )
   `
 
-  const migrationsDir = join(__dirname, '../../../packages/db/src/migrations')
+  const migrationsDir = join(__dirname, '../../../../packages/db/src/migrations')
   const files = (await readdir(migrationsDir))
     .filter(f => f.endsWith('.sql'))
     .sort()

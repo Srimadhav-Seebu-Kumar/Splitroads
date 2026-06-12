@@ -1,7 +1,7 @@
 # CURRENT_WORKING_DIRECTION.md
 
 > **What are we building RIGHT NOW?**
-> Last updated: 2026-06-12 (build session 1) · Owner: founding team · Review: weekly, Monday
+> Last updated: 2026-06-12 (build session 2 — UI/UX) · Owner: founding team · Review: weekly, Monday
 
 This file is deliberately short and deliberately bossy. If a task isn't justified by this file, it waits.
 
@@ -63,14 +63,33 @@ That end-to-end loop — capture → infer → simulate → insight — running 
 | `apps/web` — Next.js: Today dashboard, Journal, Phantom Ledger, Login, DNA stub | ✓ |
 | All TypeScript strict — 0 errors | ✓ |
 
+## Build Session 2 — UI/UX system — DONE ✓
+
+Design direction "The River of Forks": one extraordinary centerpiece, instrument-grade everything else. Constitution captured in `PRODUCT.md` + `DESIGN.md` (impeccable context).
+
+| Item | Status |
+|---|---|
+| Design tokens: warm-tinted OKLCH dark palette, amber/teal behavioral semantics, Instrument Sans + JetBrains Mono | ✓ |
+| App shell: 64px icon rail, status strip (market session + ⌘K), command palette (cmdk) | ✓ |
+| **The River** — decision timeline as a forking, glowing, self-drawing path (taken=ink, would-have-paid=amber, right-to-walk-away=teal); hover to read, click to travel; animated SVG render with idle drift | ✓ |
+| Today: River hero + one insight + open-loop confirmation + quiet close | ✓ |
+| Phantom Explorer: pattern-cell ledger (Law 1 by structure), distribution `Band` primitive, accumulation meters below the n≥20 gate, inline disclosure (no modals) | ✓ |
+| Journal, DNA (accruing strips), Login (split-screen river) restyled on the system | ✓ |
+| `Band` + `EvidenceChip` shared primitives; row normalizers absorb API casing | ✓ |
+| Dev seed (`db:seed:dev`): 47 trades + 31 phantoms, deterministic | ✓ |
+| Fixed 2 pre-existing API bugs (untyped null params in trade/phantom list queries) | ✓ |
+| All TypeScript strict — 0 errors; reduced-motion fully honored | ✓ |
+
+> Note: a WebGL (OGL) river renderer was prototyped but rendered blank (additive-blend issue); shipped the animated SVG renderer instead — reliable everywhere, looks extraordinary, same layout math. WebGL can be revisited later as a progressive enhancement.
+
 ## Next 30 Days (updated)
 
 | Week | Target |
 |---|---|
-| 1 (now) | Docker up + run migrations + dogfood: import real trades, see first PREMATURE_EXIT phantoms |
-| 2 | IBKR broker connector via IBKR Flex Reports API; R-analytics charts on journal page |
+| 1 (done) | Localhost up (Postgres@15 + Redis via Homebrew), migrations applied, dev seed, UI/UX system shipped |
+| 2 | IBKR broker connector via IBKR Flex Reports API; wire real R-analytics into the journal + river |
 | 3 | TradingView browser extension v1 (chart.opened, ticket events, hover dwell) + consent center |
-| 4 | Intent session clustering + ABANDONED_ENTRY phantoms end-to-end; correction loop UI |
+| 4 | Intent session clustering + ABANDONED_ENTRY phantoms end-to-end; correction loop already wired in Today |
 
 ## Next 90 Days
 

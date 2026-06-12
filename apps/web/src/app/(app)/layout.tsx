@@ -1,7 +1,10 @@
 'use client'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Sidebar } from '@/components/layout/Sidebar'
+import { Rail } from '@/components/layout/Rail'
+import { StatusStrip } from '@/components/layout/StatusStrip'
+import { CommandPalette } from '@/components/layout/CommandPalette'
+import { Mark } from '@/components/brand/Mark'
 import { useAuth } from '@/lib/auth-context'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -14,8 +17,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-zinc-950">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
+      <div className="flex h-screen items-center justify-center bg-bg">
+        <Mark size={32} className="animate-pulse text-faint" />
       </div>
     )
   }
@@ -23,12 +26,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto bg-zinc-950">
-        <div className="mx-auto max-w-6xl px-6 py-8">
+      <Rail />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <StatusStrip />
+        <main className="flex-1 overflow-y-auto">
           {children}
-        </div>
-      </main>
+        </main>
+      </div>
+      <CommandPalette />
     </div>
   )
 }

@@ -8,8 +8,8 @@ export function Card({ children, className, onClick }: CardProps) {
     <div
       onClick={onClick}
       className={cn(
-        'rounded-xl border border-zinc-800 bg-zinc-900 p-5',
-        onClick && 'cursor-pointer hover:border-zinc-700 transition-colors',
+        'rounded-[10px] border border-line bg-raised p-5',
+        onClick && 'cursor-pointer transition-colors duration-200 hover:border-line-strong',
         className
       )}
     >
@@ -23,9 +23,9 @@ export function CardHeader({ children, className }: { children: ReactNode; class
 }
 
 export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
-  return <h3 className={cn('text-sm font-medium text-zinc-400 uppercase tracking-wider', className)}>{children}</h3>
+  return <h3 className={cn('text-xs font-medium uppercase tracking-[0.14em] text-faint', className)}>{children}</h3>
 }
 
 export function CardValue({ children, className }: { children: ReactNode; className?: string }) {
-  return <p className={cn('text-2xl font-semibold tabular-nums text-zinc-100', className)}>{children}</p>
+  return <p className={cn('num text-2xl font-semibold text-ink', className)}>{children}</p>
 }

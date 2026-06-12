@@ -1,22 +1,110 @@
 @import "tailwindcss";
 
+/* ─── Split-Roads design tokens (see DESIGN.md) ─────────────────────────────
+   Warm-tinted dark. The quiet room after the screaming terminal.
+   Two semantic accents only: cost (amber) and gain (teal). */
+
 :root {
-  --background: #09090b;
-  --foreground: #f4f4f5;
+  --bg:          oklch(0.155 0.008 75);
+  --bg-raised:   oklch(0.19  0.009 75);
+  --bg-overlay:  oklch(0.23  0.010 75);
+  --line:        oklch(0.30  0.010 75);
+  --line-strong: oklch(0.38  0.012 75);
+
+  --text:        oklch(0.93  0.006 80);
+  --text-dim:    oklch(0.72  0.010 78);
+  --text-faint:  oklch(0.55  0.010 78);
+
+  --cost:        oklch(0.78  0.13  75);
+  --cost-deep:   oklch(0.62  0.12  70);
+  --gain:        oklch(0.80  0.10 185);
+  --gain-deep:   oklch(0.64  0.09 190);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@theme inline {
+  --color-bg:          var(--bg);
+  --color-raised:      var(--bg-raised);
+  --color-overlay:     var(--bg-overlay);
+  --color-line:        var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink:         var(--text);
+  --color-dim:         var(--text-dim);
+  --color-faint:       var(--text-faint);
+  --color-cost:        var(--cost);
+  --color-cost-deep:   var(--cost-deep);
+  --color-gain:        var(--gain);
+  --color-gain-deep:   var(--gain-deep);
+
+  --font-sans: var(--font-instrument), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tabular numerals globally for all stat values */
-.tabular-nums { font-variant-numeric: tabular-nums; }
+/* Numbers are the product's credibility: mono + tabular wherever they appear */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+::selection { background: oklch(0.64 0.09 190 / 0.35); }
+
+:focus-visible {
+  outline: 2px solid oklch(0.80 0.10 185 / 0.6);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 
 /* Calm scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 9999px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--line-strong); }
+
+/* ─── Entry choreography ──────────────────────────────────────────────────── */
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* The river: branches draw themselves in, the field drifts at idle */
+@keyframes river-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes river-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.rise-in { animation: rise-in 0.55s var(--ease-out-expo) both; }
+.rise-in-1 { animation: rise-in 0.55s var(--ease-out-expo) 0.06s both; }
+.rise-in-2 { animation: rise-in 0.55s var(--ease-out-expo) 0.12s both; }
+.rise-in-3 { animation: rise-in 0.55s var(--ease-out-expo) 0.18s both; }
+.rise-in-4 { animation: rise-in 0.55s var(--ease-out-expo) 0.24s both; }
+
+/* Same-document View Transitions (cell -> detail morphs) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.28s;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
+}

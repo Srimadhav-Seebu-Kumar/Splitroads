@@ -1,19 +1,24 @@
 'use client'
+/**
+ * Phantom Explorer: the ledger of roads not taken.
+ * Pattern cells first (Law 1 by structure), members on demand.
+ */
+import { useMemo } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
-import { PhantomCard } from '@/components/phantoms/PhantomCard'
-import { Card } from '@/components/ui/Card'
-import { Stat } from '@/components/ui/Stat'
+import { groupIntoCells, LedgerCell } from '@/components/phantoms/Ledger'
+import { normalizePhantom } from '@/lib/normalize'
 import { formatR } from '@/lib/utils'
 import { Ghost } from 'lucide-react'
 
 export default function PhantomsPage() {
   const { token } = useAuth()
   const { data: stats } = useApi((t) => api.phantoms.stats(t))
-  const { data: phantoms, refetch } = useApi((t) => api.phantoms.list(t))
+  const { data: phantomsData, loading, refetch } = useApi((t) => api.phantoms.list(t))
 
-  const list = (phantoms ?? []) as any[]
+  const phantoms = useMemo(() => ((phantomsData as unknown[]) ?? []).map(normalizePhantom), [phantomsData])
+  const cells = useMemo(() => groupIntoCells(phantoms), [phantoms])
 
   async function handleCorrect(id: string, verdict: 'confirmed_intent' | 'denied_intent') {
     if (!token) return
@@ -22,74 +27,70 @@ export default function PhantomsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-5xl px-6 py-10">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-zinc-100 flex items-center gap-2">
-          <Ghost className="h-5 w-5 text-teal-400" /> Phantom Ledger
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          The roads not taken — every outcome is a distribution, not a taunt.
+      <header className="rise-in">
+        <h1 className="text-xl font-semibold tracking-tight text-ink">Phantoms</h1>
+        <p className="mt-1 max-w-xl text-sm text-dim">
+          The roads not taken, simulated honestly. Patterns speak only after twenty resolved phantoms; until then they accumulate in silence.
         </p>
-      </div>
+      </header>
 
-      {/* Headline stats */}
+      {/* Counts strip: quiet mono figures, not stat cards */}
       {stats && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <Card><Stat label="Total phantoms" value={stats.totalPhantoms} /></Card>
-          <Card>
-            <Stat
-              label="Early exits"
-              value={stats.prematureExits}
-              delta={stats.avgPrematureExitCostR !== null ? `${formatR(stats.avgPrematureExitCostR)} median cost` : undefined}
-              deltaPositive={false}
-            />
-          </Card>
-          <Card>
-            <Stat
-              label="Abandoned entries"
-              value={stats.abandonedEntries}
-              delta={stats.hesitationCostR !== null ? `${formatR(stats.hesitationCostR)} avg win phantom` : undefined}
-              deltaPositive={false}
-            />
-          </Card>
-          <Card>
-            <Stat
-              label="Law 1 gate"
-              value="n ≥ 20"
-              subtext="min sample for published insights"
-            />
-          </Card>
+        <div className="rise-in-1 mt-8 flex flex-wrap items-baseline gap-x-10 gap-y-3 border-y border-line py-4">
+          <Figure label="phantoms" value={String(stats.totalPhantoms)} />
+          <Figure label="early exits" value={String(stats.prematureExits)} />
+          <Figure label="abandoned entries" value={String(stats.abandonedEntries)} />
+          {stats.avgPrematureExitCostR !== null && (
+            <Figure label="median R left on table" value={formatR(stats.avgPrematureExitCostR)} tone="cost" />
+          )}
+          {stats.hesitationCostR !== null && (
+            <Figure label="avg winning phantom" value={formatR(stats.hesitationCostR)} tone="cost" />
+          )}
         </div>
       )}
 
-      {/* Evidence gate reminder — always visible */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3 text-xs text-zinc-600">
-        <strong className="text-zinc-500">How to read this:</strong> Each phantom is one counterfactual path.
-        Insights are only surfaced after 20+ resolved phantoms in a pattern.
-        Individual phantom outcomes are distributions (p05–p95 bands), not promises.
-      </div>
+      {/* The ledger */}
+      <section className="rise-in-2 mt-4" aria-label="Pattern ledger">
+        {loading ? (
+          <div className="space-y-3 py-6">
+            {[1, 2, 3].map((i) => <div key={i} className="h-14 animate-pulse rounded-lg bg-raised/50" />)}
+          </div>
+        ) : cells.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 py-20 text-center">
+            <Ghost className="h-7 w-7 text-faint" strokeWidth={1.25} />
+            <p className="text-sm text-dim">No phantoms yet.</p>
+            <p className="max-w-sm text-xs text-faint">
+              Import trades with plans in the Journal to spawn early-exit phantoms. Abandoned-entry phantoms arrive once intent capture is on.
+            </p>
+          </div>
+        ) : (
+          <div>
+            {cells.map((cell) => (
+              <LedgerCell key={cell.key} cell={cell} onCorrect={handleCorrect} />
+            ))}
+          </div>
+        )}
+      </section>
 
-      {/* Phantom grid */}
-      {list.length === 0 ? (
-        <Card className="py-16 text-center">
-          <Ghost className="mx-auto mb-3 h-8 w-8 text-zinc-700" />
-          <p className="text-sm text-zinc-500">No phantoms yet.</p>
-          <p className="mt-1 text-xs text-zinc-700">
-            Import trades with plans to generate Early Exit phantoms, or install the extension for Abandoned Entry phantoms.
-          </p>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {list.map((p: any) => (
-            <PhantomCard
-              key={p.phantomId}
-              phantom={p}
-              onCorrect={p.phantomType === 'ABANDONED_ENTRY' ? handleCorrect : undefined}
-            />
-          ))}
-        </div>
-      )}
+      {/* Permanent furniture */}
+      <p className="rise-in-3 mt-8 text-[11px] leading-relaxed text-faint">
+        How to read this: every estimate is a distribution (p05 to p95 band, median tick), never a promise.
+        Simulations use conservative fills and label every assumed parameter.
+        Outcomes wear amber when the road would have paid and teal when walking away was right; money colors have no place here.
+      </p>
+    </div>
+  )
+}
+
+function Figure({ label, value, tone }: { label: string; value: string; tone?: 'cost' | 'gain' }) {
+  return (
+    <div className="flex items-baseline gap-2">
+      <span className={`num text-lg font-semibold ${tone === 'cost' ? 'text-cost' : tone === 'gain' ? 'text-gain' : 'text-ink'}`}>
+        {value}
+      </span>
+      <span className="text-[11px] uppercase tracking-[0.1em] text-faint">{label}</span>
     </div>
   )
 }
