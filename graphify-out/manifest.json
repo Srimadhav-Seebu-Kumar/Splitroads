@@ -1,0 +1,330 @@
+{
+  "/Users/srimadhavseebukumar/Documents/Splitroads/scripts/screenshot.mjs": {
+    "mtime": 1781253367.0950997,
+    "hash": "3a6afdfaf768549873b7e72d48400f6f"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/contracts/src/index.ts": {
+    "mtime": 1781249323.9273603,
+    "hash": "e2ce88b98d5ccd52c490fe2622ae1077"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/contracts/src/insights/index.ts": {
+    "mtime": 1781249317.4045856,
+    "hash": "5b9c498f8f76d34f88bcb6fd11ff0d63"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/contracts/src/phantoms/index.ts": {
+    "mtime": 1781249302.442461,
+    "hash": "bb47c7bb787751871aea14bd99dddcc2"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/contracts/src/trades/index.ts": {
+    "mtime": 1781249284.3066108,
+    "hash": "2888ac4cc157e02dd59083eb5d9d2a73"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/contracts/src/events/base.ts": {
+    "mtime": 1781249245.0228004,
+    "hash": "4442f9ea7dee130d1a1b2269cecd279f"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/contracts/src/events/intent.ts": {
+    "mtime": 1781249267.500277,
+    "hash": "a2c27b307a87136e62affc62b91b9bd7"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/db/init/00_extensions.sql": {
+    "mtime": 1781250820.9185078,
+    "hash": "fc98a12a821bd553227d4ab1010ee209"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/db/src/migrations/001_core.sql": {
+    "mtime": 1781249371.7847161,
+    "hash": "3d1f10527cc2c356d1e1db5b267bba70"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/db/src/migrations/006_profile.sql": {
+    "mtime": 1781249457.7356765,
+    "hash": "ea0430fc110be0a65aa28dfb1bb2e31e"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/db/src/migrations/004_intent.sql": {
+    "mtime": 1781249424.2916212,
+    "hash": "696dcf744bbd40db8545f5f810c402a7"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/db/src/migrations/002_trading.sql": {
+    "mtime": 1781249397.4173462,
+    "hash": "4f9589626f563da4291a080bd503d818"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/db/src/migrations/003_events.sql": {
+    "mtime": 1781250810.5761056,
+    "hash": "02c907bd224c82454a998cf75e3956ba"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/packages/db/src/migrations/005_phantoms.sql": {
+    "mtime": 1781249439.7313194,
+    "hash": "8e1e9529f8b42275da4abeca78b8d24d"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/postcss.config.mjs": {
+    "mtime": 1781253547.3641086,
+    "hash": "b94982db987a06959d1836a6d7f9735a"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/next-env.d.ts": {
+    "mtime": 1781251028.703182,
+    "hash": "a64595e6014adce3002d3bf762d2dbeb"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/next.config.ts": {
+    "mtime": 1781251049.2130601,
+    "hash": "1dc1686c199ebed56490bab2407829ad"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/app/layout.tsx": {
+    "mtime": 1781252368.3582616,
+    "hash": "917dd586de8b7ec18fe013f35eb5636e"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/app/page.tsx": {
+    "mtime": 1781250187.7787654,
+    "hash": "c6663d429ab46f42d7be24458832af50"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/app/(app)/layout.tsx": {
+    "mtime": 1781252511.9795473,
+    "hash": "d7cf3640059e0588e7589ab4268272c8"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/app/(app)/journal/page.tsx": {
+    "mtime": 1781252984.5524912,
+    "hash": "0f51636407a9b2f8aaba55541770068c"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/app/(app)/phantoms/page.tsx": {
+    "mtime": 1781252909.9959028,
+    "hash": "50252fd7f03b7eb84d78066906d69082"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/app/(app)/today/page.tsx": {
+    "mtime": 1781252833.6849067,
+    "hash": "1dd2941fb7ac5d384091b7de68f3ac0e"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/app/(app)/dna/page.tsx": {
+    "mtime": 1781252941.5822253,
+    "hash": "edac22958bc95d81f6607863c0e8ee93"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/app/login/page.tsx": {
+    "mtime": 1781254042.9061432,
+    "hash": "39f1a4bde6c0c2697496ffcf1f8104c2"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/ui/Band.tsx": {
+    "mtime": 1781252431.288434,
+    "hash": "7544b318b8edca1d9d015f145e2f7d6c"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/ui/Card.tsx": {
+    "mtime": 1781252390.3194203,
+    "hash": "acc7ca704973d727de258b189717b72e"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/ui/Badge.tsx": {
+    "mtime": 1781252400.4915335,
+    "hash": "5011303ae2b676edc0f9355b4b74252a"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/ui/Button.tsx": {
+    "mtime": 1781252396.8319738,
+    "hash": "9b8c1bc69836a55411765c6daeafaecd"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/ui/Stat.tsx": {
+    "mtime": 1781252407.751858,
+    "hash": "d2fc78a267bf581931030d2766b6300a"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/ui/Input.tsx": {
+    "mtime": 1781252404.3030994,
+    "hash": "e8800f76f7cd7521f186db524a50b094"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/river/River.tsx": {
+    "mtime": 1781254029.736417,
+    "hash": "99ee249f847b524923432409f1c44ed1"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/river/RiverFallback.tsx": {
+    "mtime": 1781253999.2282617,
+    "hash": "9644eaac4a03b688737e077fd8937137"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/river/layout.ts": {
+    "mtime": 1781252600.0287309,
+    "hash": "a85aded27ee2c0236e087a177f1c4cb6"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/phantoms/Ledger.tsx": {
+    "mtime": 1781252883.0844598,
+    "hash": "7196bcb71569b0fcc88c0886eb208c18"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/layout/CommandPalette.tsx": {
+    "mtime": 1781252492.8263075,
+    "hash": "28e8833c18c90117e1e555f370dbad7b"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/layout/StatusStrip.tsx": {
+    "mtime": 1781252499.2464192,
+    "hash": "2c4a37123e98955a37ff469507dc21cd"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/layout/Rail.tsx": {
+    "mtime": 1781252464.591602,
+    "hash": "f783bb8c09b3e27c1b085dd4c266df9e"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/components/brand/Mark.tsx": {
+    "mtime": 1781252453.047763,
+    "hash": "148bf450178a6fcd7317cacf0c2293b5"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/hooks/useApi.ts": {
+    "mtime": 1781249960.737734,
+    "hash": "3b9013d84593a4ead5f1504feda13011"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/lib/auth-context.tsx": {
+    "mtime": 1781249951.4248621,
+    "hash": "0ce651599f6755847a177096f2a2690b"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/lib/utils.ts": {
+    "mtime": 1781249939.151844,
+    "hash": "133ed597f2d589ddd3281899da14b6f9"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/lib/api.ts": {
+    "mtime": 1781249926.3183892,
+    "hash": "a628121261c902e4ecc01cecb9658c41"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/web/src/lib/normalize.ts": {
+    "mtime": 1781252782.7720435,
+    "hash": "a5c124617659d5c313388c00408eebe0"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/server.ts": {
+    "mtime": 1781249837.3983936,
+    "hash": "374bfa1ebdbfb0d7c06792eb0decfb3a"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/plugins/error-handler.ts": {
+    "mtime": 1781250338.3612843,
+    "hash": "fc216b4c57458a87b267b5b588365ce0"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/plugins/index.ts": {
+    "mtime": 1781249599.0022666,
+    "hash": "002c8ad57d4da700656f0756e19fe2fb"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/plugins/auth.ts": {
+    "mtime": 1781249591.527046,
+    "hash": "362865f5953387c34ba567f66f6d1f91"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/lib/migrate.ts": {
+    "mtime": 1781250876.7723002,
+    "hash": "67bba4ad5220659a5e38128f37a98340"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/lib/pagination.ts": {
+    "mtime": 1781249562.4716444,
+    "hash": "e992d678540570eba24baba1f5d3f7a6"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/lib/errors.ts": {
+    "mtime": 1781249555.1576104,
+    "hash": "ef885f69713418666a93208daeaad07f"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/lib/crypto.ts": {
+    "mtime": 1781249523.6716907,
+    "hash": "ab0642ce290819bea5c5df8838347ba2"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/lib/validate.ts": {
+    "mtime": 1781249569.0965428,
+    "hash": "11f10eb7099dba25d3bce09b6f1d5551"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/lib/seed-dev.ts": {
+    "mtime": 1781253128.2051492,
+    "hash": "0d0c5d36c36d745a79c364773b3f52a6"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/lib/id.ts": {
+    "mtime": 1781249575.032238,
+    "hash": "abb65abd9a225436fa110b208aab2d54"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/lib/db.ts": {
+    "mtime": 1781250325.1045895,
+    "hash": "f82ba1de70b6925f18c68bc85aa005ea"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/workers/intent-scorer.ts": {
+    "mtime": 1781249874.8947468,
+    "hash": "c52e02eca75bd0f6975bafc11bfd9465"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/routes/phantoms.routes.ts": {
+    "mtime": 1781249803.2441316,
+    "hash": "beffc03750306e0c112e18d93a312c0b"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/routes/dashboard.routes.ts": {
+    "mtime": 1781249822.1526968,
+    "hash": "c12a9f812dc79d6854a153965cada7d3"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/routes/trades.routes.ts": {
+    "mtime": 1781249787.4438605,
+    "hash": "69895f7c6ae69a5dde258f33ee342a1b"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/routes/index.ts": {
+    "mtime": 1781249829.6183817,
+    "hash": "e06e719fd949287b53c4a31b2a6367b7"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/routes/auth.routes.ts": {
+    "mtime": 1781249767.0845685,
+    "hash": "8926475941b67b5a2f8285f66183de09"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/services/auth.service.ts": {
+    "mtime": 1781249615.5374053,
+    "hash": "10f8ab74a68431577ae0a6bdb318b382"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/services/trade.service.ts": {
+    "mtime": 1781253608.6406105,
+    "hash": "6a5a6519f4096a946baa46081172666c"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/services/phantom.service.ts": {
+    "mtime": 1781253589.1572783,
+    "hash": "596029f74ebc067a99b7a01f95467f44"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/services/connectors/base.connector.ts": {
+    "mtime": 1781249733.1916583,
+    "hash": "bfbe5ce056f9d8604258588bd3a2775b"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/apps/api/src/services/connectors/csv.connector.ts": {
+    "mtime": 1781249756.7810764,
+    "hash": "320c94f9c631d5c948e93110c45ff964"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/PRODUCT.md": {
+    "mtime": 1781252182.9211154,
+    "hash": "528c196afbbb18f548e3739345563c26"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/CURRENT_WORKING_DIRECTION.md": {
+    "mtime": 1781254193.8280022,
+    "hash": "baedaeba093e83dce1d88d7d9695f83e"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/docker-compose.yml": {
+    "mtime": 1781249342.336742,
+    "hash": "369187f92a2561f6f6e5df87e45c9b15"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/DESIGN.md": {
+    "mtime": 1781252218.8698132,
+    "hash": "a4068dbdf84c58d4c4165331ae6f09ad"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/CLAUDE.md": {
+    "mtime": 1781247950.1995552,
+    "hash": "9aa3128b1d0d341e12fd3a1af3ea49b7"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/pnpm-workspace.yaml": {
+    "mtime": 1781250226.5661836,
+    "hash": "f5f68f0530f1523041e8467c1c46178d"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/docs/PHANTOM_ENGINE.md": {
+    "mtime": 1781248651.002494,
+    "hash": "9b02439f6719e0892d43845c351b4b86"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/docs/AI_ARCHITECTURE.md": {
+    "mtime": 1781248546.3320518,
+    "hash": "eb8a21097e85a38d5724d68e254aada2"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/docs/PRODUCT_ROADMAP.md": {
+    "mtime": 1781248767.553616,
+    "hash": "d8a08fda964eae16d6db188f9db9ab4a"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/docs/UI_UX_VISION.md": {
+    "mtime": 1781248971.6454563,
+    "hash": "02c4f77f1164f13b0a88dff2a2690f94"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/docs/COMPETITIVE_ANALYSIS.md": {
+    "mtime": 1781248888.390116,
+    "hash": "1d3b0159e42a04f2bd61f59cc8dc0db0"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/docs/DATA_MOAT.md": {
+    "mtime": 1781248706.15481,
+    "hash": "926e6f544b882c6e6113d11d77619ba9"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/docs/SYSTEM_ARCHITECTURE.md": {
+    "mtime": 1781248359.261749,
+    "hash": "e883004820c9027fccf89893b424bb27"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/docs/DATABASE_DESIGN.md": {
+    "mtime": 1781248456.8105,
+    "hash": "cc1b53fb784a1032078d2f5d0a1a2136"
+  },
+  "/Users/srimadhavseebukumar/Documents/Splitroads/docs/MONETIZATION.md": {
+    "mtime": 1781248821.7037334,
+    "hash": "b4749395b5260b591152ba013203169e"
+  }
+}

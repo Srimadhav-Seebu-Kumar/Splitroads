@@ -76,7 +76,7 @@ Design direction "The River of Forks": one extraordinary centerpiece, instrument
 | Phantom Explorer: pattern-cell ledger (Law 1 by structure), distribution `Band` primitive, accumulation meters below the n≥20 gate, inline disclosure (no modals) | ✓ |
 | Journal, DNA (accruing strips), Login (split-screen river) restyled on the system | ✓ |
 | `Band` + `EvidenceChip` shared primitives; row normalizers absorb API casing | ✓ |
-| Dev seed (`db:seed:dev`): 47 trades + 31 phantoms, deterministic | ✓ |
+| Dev seed (`db:seed:dev`): 4 deterministic personas exercising every component state — `river@` (veteran: gate crossed, published insights, open loops, trades today), `dawn@` (week two: all accumulating), `sol@` (disciplined: teal-dominant river), `new@` (day one: every empty state). Shared password `splitroads-demo-2026` | ✓ |
 | Fixed 2 pre-existing API bugs (untyped null params in trade/phantom list queries) | ✓ |
 | All TypeScript strict — 0 errors; reduced-motion fully honored | ✓ |
 

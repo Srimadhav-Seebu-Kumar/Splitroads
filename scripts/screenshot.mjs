@@ -1,45 +1,70 @@
 /**
- * Dev visual-iteration tool: screenshots app surfaces as the seed user.
- * Usage: node scripts/screenshot.mjs [route ...]   (default: all)
- * Output: .dev/shots/<name>.png
+ * Dev visual-iteration tool: screenshots app surfaces per persona.
+ * Usage:
+ *   node scripts/screenshot.mjs                  # all personas, key routes
+ *   node scripts/screenshot.mjs river /today     # one persona, one route
+ * Output: .dev/shots/<persona>-<route>.png
  */
 import { chromium } from 'playwright'
 import { mkdirSync } from 'fs'
 
 const WEB = process.env.WEB_URL ?? 'http://localhost:3000'
 const API = process.env.API_URL ?? 'http://localhost:3001/api/v1'
-const EMAIL = 'river@splitroads.dev'
-const PASSWORD = 'flowing-rivers-demo-2026'
+const PASSWORD = 'splitroads-demo-2026'
 
-const ALL = ['/login', '/today', '/phantoms', '/journal', '/dna']
-const routes = process.argv.slice(2).length ? process.argv.slice(2) : ALL
+const PERSONAS = {
+  river: 'river@splitroads.dev',
+  dawn: 'dawn@splitroads.dev',
+  sol: 'sol@splitroads.dev',
+  new: 'new@splitroads.dev',
+}
+const ROUTES = ['/today', '/phantoms', '/journal', '/dna']
+
+const argPersona = process.argv[2]
+const argRoute = process.argv[3]
+const personaKeys = argPersona && PERSONAS[argPersona] ? [argPersona] : Object.keys(PERSONAS)
+const routes = argRoute ? [argRoute] : ROUTES
 
 mkdirSync('.dev/shots', { recursive: true })
 
-const res = await fetch(`${API}/auth/login`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email: EMAIL, password: PASSWORD }),
-})
-const json = await res.json()
-if (!json.ok) throw new Error(`login failed: ${JSON.stringify(json)}`)
-const token = json.data.token
+async function tokenFor(email) {
+  const res = await fetch(`${API}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password: PASSWORD }),
+  })
+  const json = await res.json()
+  if (!json.ok) throw new Error(`login ${email}: ${JSON.stringify(json)}`)
+  return json.data.token
+}
 
 const browser = await chromium.launch()
-const ctx = await browser.newContext({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 1.5 })
 
-for (const route of routes) {
+// Login page once (no auth)
+{
+  const ctx = await browser.newContext({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 1.5 })
   const page = await ctx.newPage()
-  if (route !== '/login') {
-    await page.addInitScript(([t]) => localStorage.setItem('sr_token', t), [token])
+  await page.goto(`${WEB}/login`, { waitUntil: 'domcontentloaded' })
+  await page.waitForTimeout(2500)
+  await page.screenshot({ path: '.dev/shots/login.png' })
+  console.log('shot login.png')
+  await ctx.close()
+}
+
+for (const key of personaKeys) {
+  const token = await tokenFor(PERSONAS[key])
+  const ctx = await browser.newContext({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 1.5 })
+  await ctx.addInitScript(([t]) => localStorage.setItem('sr_token', t), [token])
+  for (const route of routes) {
+    const page = await ctx.newPage()
+    await page.goto(`${WEB}${route}`, { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(4200)
+    const name = `${key}-${route.slice(1).replaceAll('/', '-')}`
+    await page.screenshot({ path: `.dev/shots/${name}.png` })
+    console.log(`shot ${name}.png`)
+    await page.close()
   }
-  await page.goto(`${WEB}${route}`, { waitUntil: 'domcontentloaded' })
-  // Let data load and the river reveal play out (2.4s) plus settle
-  await page.waitForTimeout(4500)
-  const name = route === '/' ? 'root' : route.slice(1).replaceAll('/', '-')
-  await page.screenshot({ path: `.dev/shots/${name}.png` })
-  console.log(`shot ${name}.png`)
-  await page.close()
+  await ctx.close()
 }
 
 await browser.close()
